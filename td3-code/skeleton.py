@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+""" ???
+import itertools
+import string
+??? """
+
 import time
 import sys
 from toolbox import *
@@ -10,9 +15,16 @@ nbpasswords = 1000000 # would be larger in real-life
 nbiterations = 10     # 10000 is currently recommended, should be adapted to the usecase and changed with time (improvement of computation power), like a key size
 
 
+
 ############################################
 # Part of the script to edit               #
 ############################################
+""" ???
+def genallpass(passwordlength):
+    chars = string.ascii_letters + string.digits
+    for item in itertools.product(chars, repeat=passwordlength):
+        yield "".join(item)
+??? """
 
 # Hint : you can call decrypt(key,data) to decrypt data using key
 def crackencrypted(database):
@@ -20,7 +32,10 @@ def crackencrypted(database):
     crackeddb = []
     for i in database:
         # i[0] is the login, i[1] is the encrypted password
-        #...
+        #... 
+        """ ???
+        i[1] = decrypt(key, i[1]) 
+        ??? """
         crackeddb.append((i[0],i[1])) # second argument should contain cleartext password
     return crackeddb
 
@@ -30,11 +45,24 @@ def crackencrypted(database):
 def cracksha(database):
     global nbpasswords
     passwords = getPassDict(nbpasswords) # passwords contains a dictionary of passwords
-    #...
+    #... 
+    """ ??? 
+    shapasswords = genshahashes(passwords) 
+    ??? """
+
     crackeddb = []
     for i in database:
         # i[0] is the login, i[1] is the hashed password
-        #...
+        #... 
+        """ ???
+        temp = i[1]
+        i[1] = getpassfromshahash(shapasswords, i[1]) 
+        if i[1] == None:
+            allpass = genallpass(6)
+            for p in allpass:
+                if salthash(p, i[2]) == temp:
+                    i[1] = p
+        ??? """
         crackeddb.append((i[0],i[1])) # second argument should contain cleartext password
     return crackeddb
 
@@ -45,9 +73,23 @@ def cracksaltedsha(database):
     crackeddb = []
     for i in database:
         # i[0] is the login, i[1] is the hashed password, i[2] is the salt
-        #...
+        #... 
+        """ ???
+        found = False
+        for p in passwords:
+            if salthash(p, i[2]) == i[1]:
+                i[1] = p
+                found = True
+
+        if not found:
+            allpass = genallpass(6)
+            for p in allpass:
+                if salthash(p, i[2]) == i[1]:
+                    i[1] = p
+        ??? """
         crackeddb.append((i[0],i[1])) # second argument should contain cleartext password
     return crackeddb
+
 
 # Hint : pbkdf2(password, salt, nbiterations) returns the pbkdf2 of password using salt and nbiterations
 def crackpbkdf2(database):
@@ -57,10 +99,21 @@ def crackpbkdf2(database):
     for i in database:
         # i[0] is the login, i[1] is the hashed password, i[2] is the salt, i[3] is the iteration count
         #...
+        """ ???
+        found = False
+        for p in passwords:
+            if pbkdf2(p, i[2], i[3]) == i[1]:
+                i[1] = p
+                found = True
+
+        if not found:
+            allpass = genallpass(6)
+            for p in allpass:
+                if salthash(p, i[2]) == i[1]:
+                    i[1] = p
+        ??? """
         crackeddb.append((i[0],i[1])) # second argument should contain cleartext password
     return crackeddb
-
-
 
 ############################################
 # Nothing to change after this line !      #
