@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-""" ???
+# """ ??? """
 import itertools
 import string
-??? """
+# """ ??? """
 
 import time
 import sys
@@ -19,12 +19,12 @@ nbiterations = 10     # 10000 is currently recommended, should be adapted to the
 ############################################
 # Part of the script to edit               #
 ############################################
-""" ???
+# """ ??? """
 def genallpass(passwordlength):
     chars = string.ascii_letters + string.digits
     for item in itertools.product(chars, repeat=passwordlength):
         yield "".join(item)
-??? """
+# """ ??? """
 
 # Hint : you can call decrypt(key,data) to decrypt data using key
 def crackencrypted(database):
@@ -33,9 +33,7 @@ def crackencrypted(database):
     for i in database:
         # i[0] is the login, i[1] is the encrypted password
         #... 
-        """ ???
-        i[1] = decrypt(key, i[1]) 
-        ??? """
+        i[1] = decrypt(key, i[1]) # """ ??? """
         crackeddb.append((i[0],i[1])) # second argument should contain cleartext password
     return crackeddb
 
@@ -46,23 +44,23 @@ def cracksha(database):
     global nbpasswords
     passwords = getPassDict(nbpasswords) # passwords contains a dictionary of passwords
     #... 
-    """ ??? 
-    shapasswords = genshahashes(passwords) 
-    ??? """
+    shapasswords = genshahashes(passwords) # """ ??? """
 
     crackeddb = []
     for i in database:
         # i[0] is the login, i[1] is the hashed password
         #... 
-        """ ???
+
+        # """ ??? """
         temp = i[1]
         i[1] = getpassfromshahash(shapasswords, i[1]) 
         if i[1] == None:
             allpass = genallpass(6)
             for p in allpass:
-                if salthash(p, i[2]) == temp:
+                if salthash(p, i[2]) == temp: ###################################### TO FIX
                     i[1] = p
-        ??? """
+        # """ ??? """
+
         crackeddb.append((i[0],i[1])) # second argument should contain cleartext password
     return crackeddb
 
@@ -74,7 +72,8 @@ def cracksaltedsha(database):
     for i in database:
         # i[0] is the login, i[1] is the hashed password, i[2] is the salt
         #... 
-        """ ???
+
+        # """ ??? """
         found = False
         for p in passwords:
             if salthash(p, i[2]) == i[1]:
@@ -86,7 +85,8 @@ def cracksaltedsha(database):
             for p in allpass:
                 if salthash(p, i[2]) == i[1]:
                     i[1] = p
-        ??? """
+        # """ ??? """
+
         crackeddb.append((i[0],i[1])) # second argument should contain cleartext password
     return crackeddb
 
@@ -99,7 +99,8 @@ def crackpbkdf2(database):
     for i in database:
         # i[0] is the login, i[1] is the hashed password, i[2] is the salt, i[3] is the iteration count
         #...
-        """ ???
+
+        # """ ??? """
         found = False
         for p in passwords:
             if pbkdf2(p, i[2], i[3]) == i[1]:
@@ -111,7 +112,8 @@ def crackpbkdf2(database):
             for p in allpass:
                 if salthash(p, i[2]) == i[1]:
                     i[1] = p
-        ??? """
+        # """ ??? """
+
         crackeddb.append((i[0],i[1])) # second argument should contain cleartext password
     return crackeddb
 
@@ -152,34 +154,34 @@ if __name__ == '__main__':
     print("Cracked encrypted DB is " + str(crackedenc))
 
     # #test SHA db
-    # print("\n============\nSHA storage:")
-    # shadb = readfile("sha")
-    # print("SHA DB is " + str(shadb))
-    # print("Authenticating with SHA DB : " + str(authsha(plaindb[0][0],plaindb[0][1],shadb)))
-    # start = time.time()
-    # crackedsha = cracksha(shadb)
-    # end = time.time()
-    # print("Time to crack SHA DB : " + str(end-start) + " seconds")
-    # print("Cracked SHA DB is " + str(crackedsha))
+    print("\n============\nSHA storage:")
+    shadb = readfile("sha")
+    print("SHA DB is " + str(shadb))
+    print("Authenticating with SHA DB : " + str(authsha(plaindb[0][0],plaindb[0][1],shadb)))
+    start = time.time()
+    crackedsha = cracksha(shadb)
+    end = time.time()
+    print("Time to crack SHA DB : " + str(end-start) + " seconds")
+    print("Cracked SHA DB is " + str(crackedsha))
 
     # #test Salted SHA db
-    # print("\n============\nSalted SHA storage:")
-    # saltedshadb = readfile("saltedsha")
-    # print("Salted SHA DB is " + str(saltedshadb))
-    # print("Authenticating with Salted SHA DB : " + str(authsaltedsha(plaindb[0][0],plaindb[0][1],saltedshadb)))
-    # start = time.time()
-    # crackedsaltedsha = cracksaltedsha(saltedshadb)
-    # end = time.time()
-    # print("Time to crack salted SHA DB : " + str(end-start) + " seconds")
-    # print("Cracked salted SHA DB is " + str(crackedsaltedsha))
+    print("\n============\nSalted SHA storage:")
+    saltedshadb = readfile("saltedsha")
+    print("Salted SHA DB is " + str(saltedshadb))
+    print("Authenticating with Salted SHA DB : " + str(authsaltedsha(plaindb[0][0],plaindb[0][1],saltedshadb)))
+    start = time.time()
+    crackedsaltedsha = cracksaltedsha(saltedshadb)
+    end = time.time()
+    print("Time to crack salted SHA DB : " + str(end-start) + " seconds")
+    print("Cracked salted SHA DB is " + str(crackedsaltedsha))
 
     # # test PBKDF2 DB
-    # print("\n============\nPBKDF2 storage:")
-    # pbkdf2db = readfile("pbkdf2")
-    # print("PBKDF2 DB is " + str(pbkdf2db))
-    # print("Authenticating with PBKDF2 DB : " + str(authpbkdf2(plaindb[0][0],plaindb[0][1],pbkdf2db)))
-    # start = time.time()
-    # crackedpbkdf2 = crackpbkdf2(pbkdf2db)
-    # end = time.time()
-    # print("Time to crack PBKDF2 DB : " + str(end-start) + " seconds")
-    # print("Cracked PBKDF2 DB is " + str(crackedpbkdf2))
+    print("\n============\nPBKDF2 storage:")
+    pbkdf2db = readfile("pbkdf2")
+    print("PBKDF2 DB is " + str(pbkdf2db))
+    print("Authenticating with PBKDF2 DB : " + str(authpbkdf2(plaindb[0][0],plaindb[0][1],pbkdf2db)))
+    start = time.time()
+    crackedpbkdf2 = crackpbkdf2(pbkdf2db)
+    end = time.time()
+    print("Time to crack PBKDF2 DB : " + str(end-start) + " seconds")
+    print("Cracked PBKDF2 DB is " + str(crackedpbkdf2))
